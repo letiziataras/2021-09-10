@@ -6,6 +6,8 @@ package it.polito.tdp.yelp;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.yelp.model.Business;
 import it.polito.tdp.yelp.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,10 +39,10 @@ public class FXMLController {
     private TextField txtX2; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbCitta"
-    private ComboBox<?> cmbCitta; // Value injected by FXMLLoader
+    private ComboBox<String> cmbCitta; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbB1"
-    private ComboBox<?> cmbB1; // Value injected by FXMLLoader
+    private ComboBox<String> cmbB1; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbB2"
     private ComboBox<?> cmbB2; // Value injected by FXMLLoader
@@ -50,13 +52,37 @@ public class FXMLController {
     
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	txtResult.clear();
+    	String city = cmbCitta.getValue();
+    	cmbB1.getItems().clear();
     	
+    	if (city!=null) {
+    		
+    		this.model.creaGrafo(city);
+    		
+    		
+    		for (Business b : this.model.getAllVertici()) {
+    			cmbB1.getItems().add(b.getBusinessName());
+    		}
+    		
+    		txtResult.appendText("Grafo creato!!!\n");
+    		txtResult.appendText("# VERTICI: "+model.nVertici()+"\n");
+    		txtResult.appendText("# ARCHI "+model.nArchi()+"\n");
+
+    	}else
+    		txtResult.appendText("Verifica di aver selezionato una città \n");
     }
 
     @FXML
     void doCalcolaLocaleDistante(ActionEvent event) {
-
+    	txtResult.clear();
+    	String b = cmbB1.getValue();
     	
+    	if (b!=null) {
+    		String result = this.model.doDistante(b);
+    		txtResult.appendText(result);
+    	}else
+    		txtResult.appendText("Verifica di aver selezionato una città \n");
     }
 
     @FXML
@@ -80,5 +106,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	cmbCitta.getItems().addAll(this.model.getAllCities());
     }
 }
